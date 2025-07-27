@@ -14,8 +14,8 @@
 
     .fade-in {
       opacity: 0;
-      transform: translateY(15px);
-      animation: fadeIn 0.8s ease-out forwards;
+      transform: translateY(20px);
+      animation: fadeIn 0.6s ease-out forwards;
     }
 
     @keyframes fadeIn {
@@ -26,9 +26,9 @@
     }
 
     .glass-card {
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
     }
   </style>
 </head>
@@ -39,19 +39,19 @@
     <!-- Header -->
     <header class="p-6">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <h1 class="text-3xl font-extrabold text-emerald-400 tracking-tight">PvPStealPvP</h1>
+        <h1 class="text-4xl font-black text-emerald-400 tracking-wide">PvPStealPvP</h1>
       </div>
     </header>
 
-    <!-- Hero -->
-    <section class="text-center py-16 fade-in">
-      <h2 class="text-5xl font-bold text-emerald-300 mb-4">Dominate the Box</h2>
-      <p class="text-lg text-gray-300">Join the most intense Box PvP experience.</p>
-      <div class="mt-6 flex justify-center flex-wrap gap-4">
-        <button id="copy-ip-btn" class="bg-emerald-500 text-black font-semibold py-2 px-6 rounded-full hover:bg-emerald-400 transition">
+    <!-- Hero Section -->
+    <section class="text-center py-20 fade-in">
+      <h2 class="text-6xl font-extrabold text-emerald-300 mb-6">Dominate the Box</h2>
+      <p class="text-xl text-gray-300 max-w-2xl mx-auto">Join the most intense and competitive Box PvP experience on Minehut.</p>
+      <div class="mt-8 flex justify-center flex-wrap gap-5">
+        <button id="copy-ip-btn" class="bg-gradient-to-br from-emerald-500 to-emerald-400 text-black font-semibold py-3 px-7 rounded-full hover:scale-105 transition transform duration-300 shadow-lg">
           Server IP: pvpstealpvp.minehut.gg
         </button>
-        <a href="https://discord.gg/yourinvite" target="_blank" class="bg-white text-gray-900 font-semibold py-2 px-6 rounded-full hover:bg-gray-200 transition">
+        <a href="https://discord.gg/yourinvite" target="_blank" class="bg-white text-gray-900 font-semibold py-3 px-7 rounded-full hover:bg-gray-200 transition shadow-md hover:scale-105 transform duration-300">
           Join Discord
         </a>
       </div>
@@ -61,15 +61,15 @@
     <main class="flex-grow">
       <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-12 fade-in pb-24">
 
-        <!-- Staff -->
-        <div class="glass-card rounded-2xl p-6">
-          <h2 class="text-2xl font-bold text-emerald-400 mb-4">Staff List</h2>
+        <!-- Staff List -->
+        <div class="glass-card rounded-3xl p-8 shadow-xl">
+          <h2 class="text-3xl font-bold text-emerald-400 mb-6">🧑‍💼 Staff Team</h2>
           <ul id="staff-list" class="space-y-4"></ul>
         </div>
 
         <!-- Leaderboard -->
-        <div class="glass-card rounded-2xl p-6">
-          <h2 class="text-2xl font-bold text-emerald-400 mb-4">Leaderboard</h2>
+        <div class="glass-card rounded-3xl p-8 shadow-xl">
+          <h2 class="text-3xl font-bold text-emerald-400 mb-6">🏆 Top Players</h2>
           <ol id="leaderboard" class="space-y-3 text-lg"></ol>
         </div>
 
@@ -110,18 +110,18 @@
       if (Array.isArray(data.staff)) {
         data.staff.forEach(member => {
           const li = document.createElement("li");
-          li.className = "flex items-center bg-white bg-opacity-5 rounded-xl p-4";
+          li.className = "flex items-center gap-4 bg-white bg-opacity-5 rounded-xl p-4 hover:bg-opacity-10 transition";
           li.innerHTML = `
             <img
               src="https://api.mineatar.io/face/${member.uuid}?scale=4&overlay=true"
               alt="${member.name}"
               width="48"
               height="48"
-              class="rounded-lg mr-4"
+              class="rounded-lg"
               loading="lazy"
             />
             <div>
-              <p class="font-semibold">${member.name}</p>
+              <p class="font-semibold text-lg">${member.name}</p>
               <p class="text-sm text-gray-300"><strong>Discord:</strong> ${member.discord}</p>
               <p class="text-sm text-gray-300"><strong>Rank:</strong> ${member.rank}</p>
             </div>
@@ -135,17 +135,17 @@
       if (Array.isArray(data.leaderboard)) {
         data.leaderboard.forEach(player => {
           const li = document.createElement("li");
-          li.className = "flex items-center bg-white bg-opacity-5 rounded-lg p-3";
+          li.className = "flex items-center gap-3 bg-white bg-opacity-5 rounded-lg p-3 hover:bg-opacity-10 transition";
           li.innerHTML = `
             <img
               src="https://api.mineatar.io/face/${player.uuid}?scale=2&overlay=true"
               alt="${player.username}"
               width="32"
               height="32"
-              class="rounded mr-3"
+              class="rounded"
               loading="lazy"
             />
-            <span class="text-white">${player.username}</span>
+            <span class="text-white font-medium">${player.username}</span>
           `;
           leaderboardEl.appendChild(li);
         });
