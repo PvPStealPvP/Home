@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PvPStealPvP - Lifesteal Server</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load js-yaml from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 </head>
 <body class="bg-gray-900 text-white font-sans">
   <header class="bg-gray-800 p-4 shadow-lg">
@@ -29,13 +31,11 @@
   </section>
 
   <section id="main-content" class="container mx-auto py-16 px-4 grid grid-cols-1 md:grid-cols-2 gap-12">
-    <!-- Staff List -->
     <div>
       <h2 class="text-3xl font-bold mb-6 text-emerald-400 text-center md:text-left">Staff List</h2>
       <ul id="staff-list" class="space-y-4"></ul>
     </div>
 
-    <!-- Leaderboard -->
     <div>
       <h2 class="text-3xl font-bold mb-6 text-emerald-400 text-center md:text-left">Leaderboard</h2>
       <ol id="leaderboard" class="list-decimal list-inside space-y-3 text-lg"></ol>
@@ -65,99 +65,87 @@
   </footer>
 
   <script>
-    // Sample "YAML" data hardcoded as JS object with UUIDs (replace or update as needed)
-    const data = {
-      staff: [
-        {
-          name: "Notch",
-          uuid: "069a79f444e94726a5befca90e38aaf5",
-          discord: "Notch#1234",
-          rank: "Admin",
-        },
-        {
-          name: "jeb_",
-          uuid: "853c80ef3c3749fdaa49938b674adae6",
-          discord: "Jeb#5678",
-          rank: "Moderator",
-        },
-        {
-          name: "Dinnerbone",
-          uuid: "61699a797ec3456db6fc3cead2b77f3b",
-          discord: "Dinnerbone#9876",
-          rank: "Helper",
-        },
-      ],
-      leaderboard: [
-        { username: "Technoblade", uuid: "b876ec32e396476983d51d3c5e6f9d00" },
-        { username: "Dream", uuid: "069a79f444e94726a5befca90e38aaf5" },
-        { username: "BadBoyHalo", uuid: "08b94e49e6b34a09a6e6b0d5e8f37a6b" },
-        { username: "GeorgeNotFound", uuid: "e211a7e81ac1418a84e3e5d33196ed96" },
-        { username: "Sapnap", uuid: "dfc18bb71f9c48dca0f3c2bc6f7aef98" },
-      ],
-      serverIP: "pvpstealpvp.minehut.gg",
-      discordInvite: "https://discord.gg/yourinvite"
-    };
+    async function loadData() {
+      try {
+        // Fetch your data.yml from root or folder e.g. /data.yml
+        const res = await fetch('data.yml');
+        if (!res.ok) throw new Error('Failed to fetch data.yml');
+        const text = await res.text();
 
-    // Render staff list
-    const staffListEl = document.getElementById("staff-list");
-    data.staff.forEach(member => {
-      const li = document.createElement("li");
-      li.className = "flex items-center bg-gray-800 p-4 rounded-xl";
+        // Parse YAML text to JS object
+        const data = jsyaml.load(text);
 
-      li.innerHTML = `
-        <img
-          src="https://api.mineatar.io/face/${member.uuid}?scale=4&overlay=true"
-          alt="${member.name}"
-          width="40"
-          height="40"
-          class="rounded mr-4 flex-shrink-0"
-          loading="lazy"
-        />
-        <div>
-          <p><strong>Minecraft:</strong> ${member.name}</p>
-          <p><strong>Discord:</strong> ${member.discord}</p>
-          <p><strong>Rank:</strong> ${member.rank}</p>
-        </div>
-      `;
+        renderData(data);
+      } catch (err) {
+        console.error('Error loading YAML data:', err);
+      }
+    }
 
-      staffListEl.appendChild(li);
-    });
+    function renderData(data) {
+      // Server IP for copy button
+      const copyIPBtn = document.getElementById("copy-ip-btn");
+      copyIPBtn.textContent = `Server IP: ${data.serverIP || "pvpstealpvp.minehut.gg"}`;
+      copyIPBtn.onclick = () => {
+        navigator.clipboard.writeText(data.serverIP)
+          .then(() => {
+            copyIPBtn.textContent = "Copied!";
+            setTimeout(() => {
+              copyIPBtn.textContent = `Server IP: ${data.serverIP}`;
+            }, 2000);
+          })
+          .catch(() => alert("Failed to copy IP"));
+      };
 
-    // Render leaderboard
-    const leaderboardEl = document.getElementById("leaderboard");
-    data.leaderboard.forEach(player => {
-      const li = document.createElement("li");
-      li.className = "flex items-center";
-
-      li.innerHTML = `
-        <img
-          src="https://api.mineatar.io/face/${player.uuid}?scale=2&overlay=true"
-          alt="${player.username}"
-          width="32"
-          height="32"
-          class="rounded mr-3 flex-shrink-0"
-          loading="lazy"
-        />
-        <span>${player.username}</span>
-      `;
-
-      leaderboardEl.appendChild(li);
-    });
-
-    // Copy IP to clipboard button
-    const copyIPBtn = document.getElementById("copy-ip-btn");
-    copyIPBtn.addEventListener("click", () => {
-      navigator.clipboard.writeText(data.serverIP)
-        .then(() => {
-          copyIPBtn.textContent = "Copied!";
-          setTimeout(() => {
-            copyIPBtn.textContent = `Server IP: ${data.serverIP}`;
-          }, 2000);
-        })
-        .catch(() => {
-          alert("Failed to copy IP. Please copy manually.");
+      // Staff list
+      const staffListEl = document.getElementById("staff-list");
+      staffListEl.innerHTML = "";
+      if(data.staff && Array.isArray(data.staff)) {
+        data.staff.forEach(member => {
+          const li = document.createElement("li");
+          li.className = "flex items-center bg-gray-800 p-4 rounded-xl";
+          li.innerHTML = `
+            <img
+              src="https://api.mineatar.io/face/${member.uuid}?scale=4&overlay=true"
+              alt="${member.name}"
+              width="40"
+              height="40"
+              class="rounded mr-4 flex-shrink-0"
+              loading="lazy"
+            />
+            <div>
+              <p><strong>Minecraft:</strong> ${member.name}</p>
+              <p><strong>Discord:</strong> ${member.discord}</p>
+              <p><strong>Rank:</strong> ${member.rank}</p>
+            </div>
+          `;
+          staffListEl.appendChild(li);
         });
-    });
+      }
+
+      // Leaderboard
+      const leaderboardEl = document.getElementById("leaderboard");
+      leaderboardEl.innerHTML = "";
+      if(data.leaderboard && Array.isArray(data.leaderboard)) {
+        data.leaderboard.forEach(player => {
+          const li = document.createElement("li");
+          li.className = "flex items-center";
+          li.innerHTML = `
+            <img
+              src="https://api.mineatar.io/face/${player.uuid}?scale=2&overlay=true"
+              alt="${player.username}"
+              width="32"
+              height="32"
+              class="rounded mr-3 flex-shrink-0"
+              loading="lazy"
+            />
+            <span>${player.username}</span>
+          `;
+          leaderboardEl.appendChild(li);
+        });
+      }
+    }
+
+    loadData();
   </script>
 </body>
 </html>
