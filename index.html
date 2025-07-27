@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PvPStealPvP - Lifesteal Server</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 </head>
 <body class="bg-gray-900 text-white font-sans">
-  <header class="bg-gray-800 p-4 shadow-lg">
+
+  <!-- Header -->
+  <header class="bg-gray-800 p-4 shadow-lg sticky top-0 z-50">
     <div class="container mx-auto flex justify-between items-center">
       <h1 class="text-2xl font-bold text-emerald-400">PvPStealPvP</h1>
       <nav>
@@ -18,14 +21,18 @@
     </div>
   </header>
 
+  <!-- Hero -->
   <section class="text-center py-20 bg-gradient-to-b from-black via-gray-900 to-gray-800">
     <h2 class="text-4xl font-bold text-emerald-400">Steal Hearts. Dominate PvP.</h2>
     <p class="mt-4 text-lg">Join the most intense Lifesteal PvP experience.</p>
     <div class="mt-6">
-      <span class="bg-emerald-500 text-black py-2 px-4 rounded-lg font-bold">Server IP: pvpstealpvp.minehut.gg</span>
+      <button onclick="copyIP()" class="bg-emerald-500 hover:bg-emerald-400 text-black py-2 px-6 rounded-lg font-bold transition">
+        Copy Server IP: pvpstealpvp.minehut.gg
+      </button>
     </div>
   </section>
 
+  <!-- Features -->
   <section id="features" class="py-16 bg-gray-800">
     <div class="container mx-auto px-4 grid md:grid-cols-3 gap-6 text-center">
       <div class="bg-gray-700 p-6 rounded-xl">
@@ -43,7 +50,24 @@
     </div>
   </section>
 
-  <section id="join" class="py-16 text-center bg-gray-900">
+  <!-- Staff + Leaderboard -->
+  <section class="py-16 bg-gray-900">
+    <div class="container mx-auto grid md:grid-cols-2 gap-12 px-4">
+      <!-- Staff List -->
+      <div>
+        <h2 class="text-3xl font-bold text-emerald-400 mb-6 text-center">Staff</h2>
+        <ul id="staff-list" class="space-y-4"></ul>
+      </div>
+      <!-- Leaderboard -->
+      <div>
+        <h2 class="text-3xl font-bold text-emerald-400 mb-6 text-center">Top Players</h2>
+        <ol id="leaderboard" class="space-y-3 text-lg"></ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Join -->
+  <section id="join" class="py-16 text-center bg-gray-800">
     <h2 class="text-3xl font-bold mb-4 text-emerald-400">How to Join</h2>
     <ol class="list-decimal list-inside space-y-3 text-lg">
       <li>Launch Minecraft (Java or Bedrock)</li>
@@ -53,7 +77,8 @@
     </ol>
   </section>
 
-  <section id="community" class="py-16 bg-gray-800 text-center">
+  <!-- Community -->
+  <section id="community" class="py-16 bg-gray-900 text-center">
     <h2 class="text-3xl font-bold text-emerald-400 mb-4">Community</h2>
     <p class="mb-4">Join our Discord for updates, events & support:</p>
     <a href="https://discord.gg/yourinvite" target="_blank" class="inline-block bg-emerald-500 text-black px-6 py-2 rounded-xl font-bold hover:bg-emerald-400 transition">
@@ -61,8 +86,57 @@
     </a>
   </section>
 
+  <!-- Footer -->
   <footer class="bg-gray-950 text-gray-500 py-4 text-center text-sm">
     &copy; 2025 PvPStealPvP. All rights reserved.
   </footer>
+
+  <!-- Scripts -->
+  <script>
+    function copyIP() {
+      navigator.clipboard.writeText('pvpstealpvp.minehut.gg');
+      alert('Server IP copied to clipboard!');
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch('data.yml');
+        const text = await res.text();
+        const data = jsyaml.load(text);
+
+        const staffList = document.getElementById('staff-list');
+        const leaderboard = document.getElementById('leaderboard');
+
+        staffList.innerHTML = '';
+        leaderboard.innerHTML = '';
+
+        data.staff.forEach(member => {
+          staffList.innerHTML += `
+            <li class="flex items-center bg-gray-800 p-4 rounded-xl">
+              <img src="https://mc-heads.net/avatar/${member.name}/40" class="rounded mr-4" />
+              <div>
+                <p><strong>Minecraft:</strong> ${member.name}</p>
+                <p><strong>Discord:</strong> ${member.discord}</p>
+                <p><strong>Rank:</strong> ${member.rank}</p>
+              </div>
+            </li>`;
+        });
+
+        data.leaderboard.forEach(player => {
+          leaderboard.innerHTML += `
+            <li class="flex items-center">
+              <img src="https://mc-heads.net/avatar/${player.username}/32" class="rounded mr-3" />
+              <span>${player.username}</span>
+            </li>`;
+        });
+
+      } catch (err) {
+        console.error('Error loading data:', err);
+      }
+    }
+
+    loadData();
+    setInterval(loadData, 60000); // refresh every 60s
+  </script>
 </body>
 </html>
