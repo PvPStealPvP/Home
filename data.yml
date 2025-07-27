@@ -1,0 +1,13 @@
+leaderboard:
+  - username: Dream
+  - username: Technoblade
+  - username: Steve
+  - username: Alex
+
+staff:
+  - name: Jevdet
+    discord: Jevdet
+    rank: Owner
+  - name: game_gzt
+    discord: gzt.de
+    rank: Dev
