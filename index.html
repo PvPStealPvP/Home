@@ -60,28 +60,36 @@
     console.error(msg);
   }
 
-  function loadLeaderboard() {
-    fetch('leaderboard.yml?_=' + Date.now())
-      .then(res => {
-        if (!res.ok) throw new Error('HTTP ' + res.status + ' loading leaderboard');
-        return res.text();
-      })
-      .then(yml => {
-        const list = jsyaml.load(yml);
-        if (!Array.isArray(list)) throw new Error('Leaderboard is not a list');
-        const table = document.getElementById('leaderboardTable');
-        table.innerHTML = '';
-        list.forEach((entry, i) => {
-          table.innerHTML += `
-            <tr>
-              <td class="p-3">${i + 1}</td>
-              <td class="p-3">${entry.player || '??'}</td>
-            </tr>`;
-        });
-        showError('leaderboardError', ''); // clear errors
-      })
-      .catch(err => showError('leaderboardError', err.message));
-  }
+function loadLeaderboard() {
+  fetch('leaderboard.yml?_=' + Date.now())
+    .then(res => {
+      if (!res.ok) throw new Error('HTTP ' + res.status + ' loading leaderboard');
+      return res.text();
+    })
+    .then(yml => {
+      const list = jsyaml.load(yml);
+      if (!Array.isArray(list)) throw new Error('Leaderboard is not a list');
+      const table = document.getElementById('leaderboardTable');
+      table.innerHTML = '';
+      list.forEach((entry, i) => {
+      <td class="p-3 flex items-center justify-between gap-4">
+      <span>${username}</span>
+    <img src="${skinURL}" alt="${username}" class="h-10 w-auto rounded" />
+    </td>
+        const skinURL = `https://minotar.net/armor/body/${username}/40.png?${Date.now()}`; // adds timestamp to refresh
+        table.innerHTML += `
+          <tr>
+            <td class="p-3">${i + 1}</td>
+            <td class="p-3 flex items-center justify-between gap-4">
+              <span>${username}</span>
+              <img src="${skinURL}" alt="${username}" class="h-10 w-auto rounded" />
+            </td>
+          </tr>`;
+      });
+      showError('leaderboardError', '');
+    })
+    .catch(err => showError('leaderboardError', err.message));
+}
 
   function loadStaff() {
     fetch('staff.yml?_=' + Date.now())
