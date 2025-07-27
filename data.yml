@@ -1,13 +1,18 @@
-leaderboard:
-  - username: Dream
-  - username: Technoblade
-  - username: Steve
-  - username: Alex
-
 staff:
   - name: Jevdet
+    uuid: 71802f9071dd46ff8ef00b0b35956196
     discord: Jevdet
     rank: Owner
+
   - name: game_gzt
+    uuid: 8b417b429c594806973a07fe631b571a
     discord: gzt.de
     rank: Dev
+    
+leaderboard:
+  - username: Jevdet
+    uuid: 71802f9071dd46ff8ef00b0b35956196
+  - username: game_gzt
+    uuid: 069a79f444e94726a5befca90e38aaf5
+  - username: BadBoyHalo
+    uuid: 08b94e49e6b34a09a6e6b0d5e8f37a6b
