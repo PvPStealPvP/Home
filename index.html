@@ -30,6 +30,24 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(14px);
     }
+
+    @media (min-width: 1024px) {
+      .grid-areas-layout {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr 1fr;
+        grid-template-areas: "left middle right";
+        gap: 2.5rem; /* 10 */
+      }
+      .area-left {
+        grid-area: left;
+      }
+      .area-middle {
+        grid-area: middle;
+      }
+      .area-right {
+        grid-area: right;
+      }
+    }
   </style>
 </head>
 <body class="text-white font-sans">
@@ -59,24 +77,24 @@
 
     <!-- Main Content -->
     <main class="flex-grow px-4 sm:px-6">
-      <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10 pb-24 fade-in">
+      <div class="max-w-6xl mx-auto grid-areas-layout gap-10 pb-24 fade-in grid-cols-1 lg:grid-cols-3">
 
         <!-- Staff -->
-        <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl area-left">
           <h2 class="text-2xl sm:text-3xl font-bold text-emerald-400 mb-6">Staff Team</h2>
           <ul id="staff-list" class="space-y-4"></ul>
         </div>
 
-        <!-- Leaderboard -->
-        <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl">
-          <h2 class="text-2xl sm:text-3xl font-bold text-emerald-400 mb-6">Top Players</h2>
-          <ol id="leaderboard" class="space-y-3 text-base sm:text-lg"></ol>
-        </div>
-
         <!-- Rules -->
-        <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl area-middle">
           <h2 class="text-2xl sm:text-3xl font-bold text-emerald-400 mb-6">Server Rules</h2>
           <ol id="rules-list" class="space-y-3 list-decimal list-inside text-sm sm:text-base text-gray-200"></ol>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl area-right">
+          <h2 class="text-2xl sm:text-3xl font-bold text-emerald-400 mb-6">Top Players</h2>
+          <ol id="leaderboard" class="space-y-3 text-base sm:text-lg"></ol>
         </div>
 
       </div>
