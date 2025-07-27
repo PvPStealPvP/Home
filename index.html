@@ -2,122 +2,125 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PvPStealPvP - Lifesteal Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 </head>
 <body class="bg-gray-900 text-white font-sans">
 
-  <!-- Header -->
-  <header class="bg-gray-800 p-4 shadow-lg sticky top-0 z-50">
+  <header class="bg-gray-800 p-4 shadow-lg">
     <div class="container mx-auto flex justify-between items-center">
       <h1 class="text-2xl font-bold text-emerald-400">PvPStealPvP</h1>
-      <nav>
-        <a href="#features" class="mx-3 hover:text-emerald-300">Features</a>
-        <a href="#join" class="mx-3 hover:text-emerald-300">Join</a>
-        <a href="#community" class="mx-3 hover:text-emerald-300">Community</a>
-      </nav>
     </div>
   </header>
 
-  <!-- Hero -->
   <section class="text-center py-20 bg-gradient-to-b from-black via-gray-900 to-gray-800">
     <h2 class="text-4xl font-bold text-emerald-400">Steal Hearts. Dominate PvP.</h2>
     <p class="mt-4 text-lg">Join the most intense Lifesteal PvP experience.</p>
     <div class="mt-6">
-      <button onclick="copyIP()" class="bg-emerald-500 hover:bg-emerald-400 text-black py-2 px-6 rounded-lg font-bold transition">
-        Copy Server IP: pvpstealpvp.minehut.gg
+      <button onclick="copyIP()" class="bg-emerald-500 text-black py-2 px-4 rounded-lg font-bold hover:bg-emerald-400 transition">
+        Copy Server IP
       </button>
-    </div>
-  </section>
-  <!-- Staff + Leaderboard -->
-  <section class="py-16 bg-gray-900">
-    <div class="container mx-auto grid md:grid-cols-2 gap-12 px-4">
-      <!-- Staff List -->
-      <div>
-        <h2 class="text-3xl font-bold text-emerald-400 mb-6 text-center">Staff</h2>
-        <ul id="staff-list" class="space-y-4"></ul>
-      </div>
-      <!-- Leaderboard -->
-      <div>
-        <h2 class="text-3xl font-bold text-emerald-400 mb-6 text-center">Top Players</h2>
-        <ol id="leaderboard" class="space-y-3 text-lg"></ol>
-      </div>
+      <p id="copy-feedback" class="mt-2 text-sm text-gray-400 hidden">IP copied to clipboard!</p>
     </div>
   </section>
 
-  <!-- Join -->
-  <section id="join" class="py-16 text-center bg-gray-800">
-    <h2 class="text-3xl font-bold mb-4 text-emerald-400">How to Join</h2>
-    <ol class="list-decimal list-inside space-y-3 text-lg">
-      <li>Launch Minecraft (Java or Bedrock)</li>
-      <li>Go to Multiplayer → Add Server</li>
-      <li>Enter IP: <strong class="text-emerald-400">pvpstealpvp.minehut.gg</strong></li>
-      <li>Join the fight. Survive and thrive.</li>
-    </ol>
+  <section class="py-16 bg-gray-900 container mx-auto px-4 grid md:grid-cols-2 gap-12">
+    <div>
+      <h2 class="text-2xl font-bold text-emerald-400 mb-4">Staff Team</h2>
+      <ul id="staff-list" class="space-y-4"></ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-bold text-emerald-400 mb-4">Leaderboard</h2>
+      <ol id="leaderboard" class="space-y-2 list-decimal list-inside"></ol>
+    </div>
   </section>
 
-  <!-- Community -->
-  <section id="community" class="py-16 bg-gray-900 text-center">
-    <h2 class="text-3xl font-bold text-emerald-400 mb-4">Community</h2>
-    <p class="mb-4">Join our Discord for updates, events & support:</p>
-    <a href="https://discord.gg/yourinvite" target="_blank" class="inline-block bg-emerald-500 text-black px-6 py-2 rounded-xl font-bold hover:bg-emerald-400 transition">
+  <section class="py-10 bg-gray-800 text-center">
+    <h2 class="text-2xl font-bold text-emerald-400 mb-4">Join Our Discord</h2>
+    <a href="https://discord.gg/yourinvite" target="_blank" class="bg-emerald-500 text-black px-6 py-2 rounded-xl font-bold hover:bg-emerald-400 transition">
       Join Discord
     </a>
   </section>
 
-  <!-- Footer -->
   <footer class="bg-gray-950 text-gray-500 py-4 text-center text-sm">
     &copy; 2025 PvPStealPvP. All rights reserved.
   </footer>
 
-  <!-- Scripts -->
   <script>
-    function copyIP() {
-      navigator.clipboard.writeText('pvpstealpvp.minehut.gg');
-      alert('Server IP copied to clipboard!');
+    const SERVER_IP = "pvpstealpvp.minehut.gg";
+
+    async function getUUID(username) {
+      try {
+        const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.id;
+      } catch {
+        return null;
+      }
     }
 
     async function loadData() {
       try {
-        const res = await fetch('data.yml');
-        const text = await res.text();
-        const data = jsyaml.load(text);
+        const res = await fetch("data.yml?_=" + new Date().getTime());
+        const ymlText = await res.text();
+        const data = jsyaml.load(ymlText);
 
-        const staffList = document.getElementById('staff-list');
-        const leaderboard = document.getElementById('leaderboard');
+        const staffList = document.getElementById("staff-list");
+        const leaderboard = document.getElementById("leaderboard");
 
-        staffList.innerHTML = '';
-        leaderboard.innerHTML = '';
+        staffList.innerHTML = "";
+        leaderboard.innerHTML = "";
 
-        data.staff.forEach(member => {
+        for (const member of data.staff) {
+          const uuid = await getUUID(member.name);
+          const avatar = uuid
+            ? `https://api.mineatar.io/face/${uuid}?scale=4&overlay=true`
+            : "";
+
           staffList.innerHTML += `
             <li class="flex items-center bg-gray-800 p-4 rounded-xl">
-              <img src="https://mc-heads.net/avatar/${member.name}/40" class="rounded mr-4" />
+              <img src="${avatar}" class="rounded mr-4" width="40" height="40" alt="${member.name}" />
               <div>
                 <p><strong>Minecraft:</strong> ${member.name}</p>
                 <p><strong>Discord:</strong> ${member.discord}</p>
                 <p><strong>Rank:</strong> ${member.rank}</p>
               </div>
-            </li>`;
-        });
+            </li>
+          `;
+        }
 
-        data.leaderboard.forEach(player => {
+        for (const player of data.leaderboard) {
+          const uuid = await getUUID(player.username);
+          const avatar = uuid
+            ? `https://api.mineatar.io/face/${uuid}?scale=2&overlay=true`
+            : "";
+
           leaderboard.innerHTML += `
             <li class="flex items-center">
-              <img src="https://mc-heads.net/avatar/${player.username}/32" class="rounded mr-3" />
+              <img src="${avatar}" class="rounded mr-3" width="32" height="32" alt="${player.username}" />
               <span>${player.username}</span>
-            </li>`;
-        });
-
+            </li>
+          `;
+        }
       } catch (err) {
-        console.error('Error loading data:', err);
+        console.error("Failed to load YAML data:", err);
       }
     }
 
+    function copyIP() {
+      navigator.clipboard.writeText(SERVER_IP).then(() => {
+        const feedback = document.getElementById("copy-feedback");
+        feedback.classList.remove("hidden");
+        setTimeout(() => feedback.classList.add("hidden"), 2000);
+      });
+    }
+
     loadData();
-    setInterval(loadData, 60000); // refresh every 60s
+    setInterval(loadData, 60000); // refresh every minute
   </script>
 </body>
 </html>
