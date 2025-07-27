@@ -55,57 +55,71 @@
   </footer>
 
 <script>
-  // Utility → show error
   function showError(elemId, msg) {
     document.getElementById(elemId).innerText = msg;
     console.error(msg);
   }
 
-  // Load Leaderboard
-  fetch('leaderboard.yml')
-    .then(res => {
-      if (!res.ok) throw new Error('HTTP ' + res.status + ' loading leaderboard');
-      return res.text();
-    })
-    .then(yml => {
-      const list = jsyaml.load(yml);
-      if (!Array.isArray(list)) throw new Error('Leaderboard is not a list');
-      const table = document.getElementById('leaderboardTable');
-      list.forEach((entry, i) => {
-        table.innerHTML += `
-          <tr>
-            <td class="p-3">${i + 1}</td>
-            <td class="p-3">${entry.player || '??'}</td>
-          </tr>`;
-      });
-    })
-    .catch(err => showError('leaderboardError', err.message));
+  function loadLeaderboard() {
+    fetch('leaderboard.yml?_=' + Date.now())
+      .then(res => {
+        if (!res.ok) throw new Error('HTTP ' + res.status + ' loading leaderboard');
+        return res.text();
+      })
+      .then(yml => {
+        const list = jsyaml.load(yml);
+        if (!Array.isArray(list)) throw new Error('Leaderboard is not a list');
+        const table = document.getElementById('leaderboardTable');
+        table.innerHTML = '';
+        list.forEach((entry, i) => {
+          table.innerHTML += `
+            <tr>
+              <td class="p-3">${i + 1}</td>
+              <td class="p-3">${entry.player || '??'}</td>
+            </tr>`;
+        });
+        showError('leaderboardError', ''); // clear errors
+      })
+      .catch(err => showError('leaderboardError', err.message));
+  }
 
-  // Load Staff
-  fetch('staff.yml')
-    .then(res => {
-      if (!res.ok) throw new Error('HTTP ' + res.status + ' loading staff');
-      return res.text();
-    })
-    .then(yml => {
-      const staff = jsyaml.load(yml);
-      if (!Array.isArray(staff)) throw new Error('Staff is not a list');
-      const container = document.getElementById('staffList');
-      staff.forEach(m => {
-        const username = m.username || '??';
-        const discord = m.discord || '';
-        const role = m.role || '';
-        container.innerHTML += `
-          <div>
-            <img src="https://minotar.net/avatar/${username}/60" class="mx-auto rounded-full mb-2" />
-            <p><strong>${username}</strong><br>
-            <span class="text-gray-300">${role}</span><br>
-            <span class="text-gray-400">${discord}</span></p>
-          </div>`;
-      });
-    })
-    .catch(err => showError('staffError', err.message));
+  function loadStaff() {
+    fetch('staff.yml?_=' + Date.now())
+      .then(res => {
+        if (!res.ok) throw new Error('HTTP ' + res.status + ' loading staff');
+        return res.text();
+      })
+      .then(yml => {
+        const staff = jsyaml.load(yml);
+        if (!Array.isArray(staff)) throw new Error('Staff is not a list');
+        const container = document.getElementById('staffList');
+        container.innerHTML = '';
+        staff.forEach(m => {
+          const username = m.username || '??';
+          const discord = m.discord || '';
+          const role = m.role || '';
+          container.innerHTML += `
+            <div>
+              <img src="https://minotar.net/avatar/${username}/60" class="mx-auto rounded-full mb-2" />
+              <p><strong>${username}</strong><br>
+              <span class="text-gray-300">${role}</span><br>
+              <span class="text-gray-400">${discord}</span></p>
+            </div>`;
+        });
+        showError('staffError', ''); // clear errors
+      })
+      .catch(err => showError('staffError', err.message));
+  }
+
+  // Initial load
+  loadLeaderboard();
+  loadStaff();
+
+  // Auto-refresh every 10 seconds
+  setInterval(() => {
+    loadLeaderboard();
+    loadStaff();
+  }, 10000); // 10 seconds
 </script>
-
 </body>
 </html>
