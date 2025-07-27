@@ -105,92 +105,120 @@
   <script>
     async function loadData() {
       try {
-        const res = await fetch('data.yml');
+        const res = await fetch('data.yml', { cache: "no-store" }); // prevent caching
         if (!res.ok) throw new Error('Failed to fetch data.yml');
         const text = await res.text();
         const data = jsyaml.load(text);
-        renderData(data);
+        return data;
       } catch (err) {
         console.error('Error loading YAML data:', err);
+        return null;
       }
     }
 
     function renderData(data) {
+      if (!data) return; // skip if no data
+
       const copyIPBtn = document.getElementById("copy-ip-btn");
-      copyIPBtn.textContent = `Server IP: ${data.serverIP || "pvpstealpvp.minehut.gg"}`;
+      const serverIP = data.serverIP || "pvpstealpvp.minehut.gg";
+
+      // Only update IP button text if not currently showing "Copied!"
+      if (!copyIPBtn.textContent.includes("Copied!")) {
+        copyIPBtn.textContent = `Server IP: ${serverIP}`;
+      }
       copyIPBtn.onclick = () => {
-        navigator.clipboard.writeText(data.serverIP)
+        navigator.clipboard.writeText(serverIP)
           .then(() => {
             copyIPBtn.textContent = "Copied!";
             setTimeout(() => {
-              copyIPBtn.textContent = `Server IP: ${data.serverIP}`;
+              copyIPBtn.textContent = `Server IP: ${serverIP}`;
             }, 2000);
           })
           .catch(() => alert("Failed to copy IP"));
       };
 
-      // Staff
+      // Update Staff list
       const staffListEl = document.getElementById("staff-list");
-      staffListEl.innerHTML = "";
+      const existingStaff = Array.from(staffListEl.children).map(li => li.querySelector('p.font-semibold').textContent);
       if (Array.isArray(data.staff)) {
-        data.staff.forEach(member => {
-          const li = document.createElement("li");
-          li.className = "flex items-center gap-4 bg-white bg-opacity-5 rounded-xl p-4 hover:bg-opacity-10 transition";
-          li.innerHTML = `
-            <img
-              src="https://api.mineatar.io/face/${member.uuid}?scale=4&overlay=true"
-              alt="${member.name}"
-              width="48"
-              height="48"
-              class="rounded-lg"
-              loading="lazy"
-            />
-            <div>
-              <p class="font-semibold text-base sm:text-lg">${member.name}</p>
-              <p class="text-sm text-gray-300"><strong>Discord:</strong> ${member.discord}</p>
-              <p class="text-sm text-gray-300"><strong>Rank:</strong> ${member.rank}</p>
-            </div>
-          `;
-          staffListEl.appendChild(li);
-        });
+        const newStaffNames = data.staff.map(m => m.name);
+        if (JSON.stringify(existingStaff) !== JSON.stringify(newStaffNames)) {
+          staffListEl.innerHTML = "";
+          data.staff.forEach(member => {
+            const li = document.createElement("li");
+            li.className = "flex items-center gap-4 bg-white bg-opacity-5 rounded-xl p-4 hover:bg-opacity-10 transition";
+            li.innerHTML = `
+              <img
+                src="https://api.mineatar.io/face/${member.uuid}?scale=4&overlay=true"
+                alt="Minecraft avatar of ${member.name}"
+                width="48"
+                height="48"
+                class="rounded-lg"
+                loading="lazy"
+              />
+              <div>
+                <p class="font-semibold text-base sm:text-lg">${member.name}</p>
+                <p class="text-sm text-gray-300"><strong>Discord:</strong> ${member.discord}</p>
+                <p class="text-sm text-gray-300"><strong>Rank:</strong> ${member.rank}</p>
+              </div>
+            `;
+            staffListEl.appendChild(li);
+          });
+        }
       }
 
-      // Leaderboard
+      // Update Leaderboard list
       const leaderboardEl = document.getElementById("leaderboard");
-      leaderboardEl.innerHTML = "";
+      const existingPlayers = Array.from(leaderboardEl.children).map(li => li.querySelector('span').textContent);
       if (Array.isArray(data.leaderboard)) {
-        data.leaderboard.forEach(player => {
-          const li = document.createElement("li");
-          li.className = "flex items-center gap-3 bg-white bg-opacity-5 rounded-lg p-3 hover:bg-opacity-10 transition";
-          li.innerHTML = `
-            <img
-              src="https://api.mineatar.io/face/${player.uuid}?scale=2&overlay=true"
-              alt="${player.username}"
-              width="32"
-              height="32"
-              class="rounded"
-              loading="lazy"
-            />
-            <span class="text-white font-medium">${player.username}</span>
-          `;
-          leaderboardEl.appendChild(li);
-        });
+        const newPlayerNames = data.leaderboard.map(p => p.username);
+        if (JSON.stringify(existingPlayers) !== JSON.stringify(newPlayerNames)) {
+          leaderboardEl.innerHTML = "";
+          data.leaderboard.forEach(player => {
+            const li = document.createElement("li");
+            li.className = "flex items-center gap-3 bg-white bg-opacity-5 rounded-lg p-3 hover:bg-opacity-10 transition";
+            li.innerHTML = `
+              <img
+                src="https://api.mineatar.io/face/${player.uuid}?scale=2&overlay=true"
+                alt="Minecraft avatar of ${player.username}"
+                width="32"
+                height="32"
+                class="rounded"
+                loading="lazy"
+              />
+              <span class="text-white font-medium">${player.username}</span>
+            `;
+            leaderboardEl.appendChild(li);
+          });
+        }
       }
 
-      // Rules
+      // Update Rules list
       const rulesListEl = document.getElementById("rules-list");
-      rulesListEl.innerHTML = "";
+      const existingRules = Array.from(rulesListEl.children).map(li => li.textContent);
       if (Array.isArray(data.rules)) {
-        data.rules.forEach(rule => {
-          const li = document.createElement("li");
-          li.className = "bg-white bg-opacity-5 p-3 rounded-lg";
-          li.textContent = rule;
-          rulesListEl.appendChild(li);
-        });
+        if (JSON.stringify(existingRules) !== JSON.stringify(data.rules)) {
+          rulesListEl.innerHTML = "";
+          data.rules.forEach(rule => {
+            const li = document.createElement("li");
+            li.className = "bg-white bg-opacity-5 p-3 rounded-lg";
+            li.textContent = rule;
+            rulesListEl.appendChild(li);
+          });
+        }
       }
     }
 
-    loadData();
+    // Initial load and setup interval refresh
+    (async () => {
+      const initialData = await loadData();
+      renderData(initialData);
+
+      setInterval(async () => {
+        const newData = await loadData();
+        renderData(newData);
+      }, 10000); // every 10 seconds
+    })();
   </script>
 </body>
 </html>
