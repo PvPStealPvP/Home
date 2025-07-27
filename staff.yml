@@ -1,0 +1,11 @@
+- username: Notch
+  discord: "@notch#0001"
+  role: Owner
+
+- username: Steve
+  discord: "@steve#1234"
+  role: Admin
+
+- username: Alex
+  discord: "@alex#9999"
+  role: Moderator
