@@ -2,6 +2,10 @@
   discord: "@notch#0001"
   role: Owner
 
+- username: game_gzt
+  discord: "@gzt.de"
+  role: Dev
+
 - username: Steve
   discord: "@steve#1234"
   role: Admin
