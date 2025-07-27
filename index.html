@@ -28,7 +28,7 @@
     .glass-card {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
     }
   </style>
 </head>
@@ -38,39 +38,39 @@
 
     <!-- Header -->
     <header class="p-6">
-      <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <h1 class="text-4xl font-black text-emerald-400 tracking-wide">PvPStealPvP</h1>
+      <div class="max-w-6xl mx-auto flex justify-between items-center">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-emerald-400 tracking-tight">PvPStealPvP</h1>
       </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="text-center py-20 fade-in">
-      <h2 class="text-6xl font-extrabold text-emerald-300 mb-6">Dominate the Box</h2>
-      <p class="text-xl text-gray-300 max-w-2xl mx-auto">Join the most intense and competitive Box PvP experience on Minehut.</p>
-      <div class="mt-8 flex justify-center flex-wrap gap-5">
-        <button id="copy-ip-btn" class="bg-gradient-to-br from-emerald-500 to-emerald-400 text-black font-semibold py-3 px-7 rounded-full hover:scale-105 transition transform duration-300 shadow-lg">
+    <!-- Hero -->
+    <section class="text-center py-16 px-4 fade-in">
+      <h2 class="text-4xl sm:text-5xl font-bold text-emerald-300 mb-5 leading-tight">Dominate the Box</h2>
+      <p class="text-base sm:text-lg text-gray-300 max-w-xl mx-auto">Join the most intense and competitive Box PvP experience on Minehut.</p>
+      <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+        <button id="copy-ip-btn" class="bg-emerald-500 text-black font-semibold py-3 px-6 rounded-full hover:bg-emerald-400 transition shadow-md">
           Server IP: pvpstealpvp.minehut.gg
         </button>
-        <a href="https://discord.gg/yourinvite" target="_blank" class="bg-white text-gray-900 font-semibold py-3 px-7 rounded-full hover:bg-gray-200 transition shadow-md hover:scale-105 transform duration-300">
+        <a href="https://discord.gg/yourinvite" target="_blank" class="bg-white text-gray-900 font-semibold py-3 px-6 rounded-full hover:bg-gray-200 transition shadow-md">
           Join Discord
         </a>
       </div>
     </section>
 
     <!-- Main Content -->
-    <main class="flex-grow">
-      <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-12 fade-in pb-24">
+    <main class="flex-grow px-4 sm:px-6">
+      <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 pb-24 fade-in">
 
-        <!-- Staff List -->
-        <div class="glass-card rounded-3xl p-8 shadow-xl">
-          <h2 class="text-3xl font-bold text-emerald-400 mb-6">🧑‍💼 Staff Team</h2>
+        <!-- Staff -->
+        <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl">
+          <h2 class="text-2xl sm:text-3xl font-bold text-emerald-400 mb-6">Staff Team</h2>
           <ul id="staff-list" class="space-y-4"></ul>
         </div>
 
         <!-- Leaderboard -->
-        <div class="glass-card rounded-3xl p-8 shadow-xl">
-          <h2 class="text-3xl font-bold text-emerald-400 mb-6">🏆 Top Players</h2>
-          <ol id="leaderboard" class="space-y-3 text-lg"></ol>
+        <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl">
+          <h2 class="text-2xl sm:text-3xl font-bold text-emerald-400 mb-6">Top Players</h2>
+          <ol id="leaderboard" class="space-y-3 text-base sm:text-lg"></ol>
         </div>
 
       </div>
@@ -121,7 +121,7 @@
               loading="lazy"
             />
             <div>
-              <p class="font-semibold text-lg">${member.name}</p>
+              <p class="font-semibold text-base sm:text-lg">${member.name}</p>
               <p class="text-sm text-gray-300"><strong>Discord:</strong> ${member.discord}</p>
               <p class="text-sm text-gray-300"><strong>Rank:</strong> ${member.rank}</p>
             </div>
