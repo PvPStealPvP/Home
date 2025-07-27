@@ -1,105 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF‑8" />
-  <meta name="viewport" content="width=device‑width,initial‑scale=1.0"/>
-  <title>PvPStealPvP</title>
-  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PvPStealPvP - Lifesteal Server</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-950 text-white font-sans">
-
-  <header class="bg-gray-900 p-5 shadow-md">
+<body class="bg-gray-900 text-white font-sans">
+  <header class="bg-gray-800 p-4 shadow-lg">
     <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-3xl font-bold text-emerald-400">PvPStealPvP</h1>
-      <span class="bg-emerald-600 text-black font-bold px-4 py-2 rounded-lg">IP: pvpstealpvp.minehut.gg</span>
+      <h1 class="text-2xl font-bold text-emerald-400">PvPStealPvP</h1>
+      <nav>
+        <a href="#features" class="mx-3 hover:text-emerald-300">Features</a>
+        <a href="#join" class="mx-3 hover:text-emerald-300">Join</a>
+        <a href="#community" class="mx-3 hover:text-emerald-300">Community</a>
+      </nav>
     </div>
   </header>
 
-  <main class="flex flex-col md:flex-row p-6 gap-6">
+  <section class="text-center py-20 bg-gradient-to-b from-black via-gray-900 to-gray-800">
+    <h2 class="text-4xl font-bold text-emerald-400">Steal Hearts. Dominate PvP.</h2>
+    <p class="mt-4 text-lg">Join the most intense Lifesteal PvP experience.</p>
+    <div class="mt-6">
+      <span class="bg-emerald-500 text-black py-2 px-4 rounded-lg font-bold">Server IP: pvpstealpvp.minehut.gg</span>
+    </div>
+  </section>
 
-    <aside class="w-full md:w-1/4 bg-gray-900 p-4 rounded-xl shadow-lg">
-      <h2 class="text-xl font-bold text-emerald-300 mb-4">Staff</h2>
-      <div id="staffList" class="space-y-4 text-sm text-center">
-        <p id="staffError" class="text-red-500 text-xs"></p>
+  <section id="features" class="py-16 bg-gray-800">
+    <div class="container mx-auto px-4 grid md:grid-cols-3 gap-6 text-center">
+      <div class="bg-gray-700 p-6 rounded-xl">
+        <h3 class="text-xl font-bold text-emerald-400">Lifesteal System</h3>
+        <p>Kill players to steal their hearts. Die, and you lose one.</p>
       </div>
-    </aside>
-
-    <section class="w-full md:w-3/4 bg-gray-900 p-6 rounded-xl shadow-lg">
-      <h2 class="text-2xl font-bold text-emerald-300 mb-4">Top Players</h2>
-      <p class="text-gray-400 text-sm mb-2">Loaded from <code>leaderboard.yml</code></p>
-      <div class="bg-gray-800 rounded-lg overflow-hidden">
-        <table class="w-full text-left table-auto text-sm">
-          <thead>
-            <tr class="bg-gray-700 text-emerald-400">
-              <th class="p-3">#</th>
-              <th class="p-3">Player</th>
-            </tr>
-          </thead>
-          <tbody id="leaderboardTable" class="divide-y divide-gray-700"></tbody>
-        </table>
-        <p id="leaderboardError" class="text-red-500 text-xs m-2"></p>
+      <div class="bg-gray-700 p-6 rounded-xl">
+        <h3 class="text-xl font-bold text-emerald-400">Raiding & Clans</h3>
+        <p>Build your base or raid others. Team up or go solo.</p>
       </div>
-    </section>
+      <div class="bg-gray-700 p-6 rounded-xl">
+        <h3 class="text-xl font-bold text-emerald-400">Leaderboard</h3>
+        <p>Track top players with the most hearts and kills.</p>
+      </div>
+    </div>
+  </section>
 
-  </main>
+  <section id="join" class="py-16 text-center bg-gray-900">
+    <h2 class="text-3xl font-bold mb-4 text-emerald-400">How to Join</h2>
+    <ol class="list-decimal list-inside space-y-3 text-lg">
+      <li>Launch Minecraft (Java or Bedrock)</li>
+      <li>Go to Multiplayer → Add Server</li>
+      <li>Enter IP: <strong class="text-emerald-400">pvpstealpvp.minehut.gg</strong></li>
+      <li>Join the fight. Survive and thrive.</li>
+    </ol>
+  </section>
 
-  <footer class="text-center text-gray-500 text-sm py-4 bg-gray-950">
-    &copy; 2025 PvPStealPvP • Competitive PvP community
+  <section id="community" class="py-16 bg-gray-800 text-center">
+    <h2 class="text-3xl font-bold text-emerald-400 mb-4">Community</h2>
+    <p class="mb-4">Join our Discord for updates, events & support:</p>
+    <a href="https://discord.gg/yourinvite" target="_blank" class="inline-block bg-emerald-500 text-black px-6 py-2 rounded-xl font-bold hover:bg-emerald-400 transition">
+      Join Discord
+    </a>
+  </section>
+
+  <footer class="bg-gray-950 text-gray-500 py-4 text-center text-sm">
+    &copy; 2025 PvPStealPvP. All rights reserved.
   </footer>
-
-<script>
-  // Utility → show error
-  function showError(elemId, msg) {
-    document.getElementById(elemId).innerText = msg;
-    console.error(msg);
-  }
-
-  // Load Leaderboard
-  fetch('leaderboard.yml')
-    .then(res => {
-      if (!res.ok) throw new Error('HTTP ' + res.status + ' loading leaderboard');
-      return res.text();
-    })
-    .then(yml => {
-      const list = jsyaml.load(yml);
-      if (!Array.isArray(list)) throw new Error('Leaderboard is not a list');
-      const table = document.getElementById('leaderboardTable');
-      list.forEach((entry, i) => {
-        table.innerHTML += `
-          <tr>
-            <td class="p-3">${i + 1}</td>
-            <td class="p-3">${entry.player || '??'}</td>
-          </tr>`;
-      });
-    })
-    .catch(err => showError('leaderboardError', err.message));
-
-  // Load Staff
-  fetch('staff.yml')
-    .then(res => {
-      if (!res.ok) throw new Error('HTTP ' + res.status + ' loading staff');
-      return res.text();
-    })
-    .then(yml => {
-      const staff = jsyaml.load(yml);
-      if (!Array.isArray(staff)) throw new Error('Staff is not a list');
-      const container = document.getElementById('staffList');
-      staff.forEach(m => {
-        const username = m.username || '??';
-        const discord = m.discord || '';
-        const role = m.role || '';
-        container.innerHTML += `
-          <div>
-            <img src="https://minotar.net/avatar/${username}/60" class="mx-auto rounded-full mb-2" />
-            <p><strong>${username}</strong><br>
-            <span class="text-gray-300">${role}</span><br>
-            <span class="text-gray-400">${discord}</span></p>
-          </div>`;
-      });
-    })
-    .catch(err => showError('staffError', err.message));
-</script>
-
 </body>
 </html>
