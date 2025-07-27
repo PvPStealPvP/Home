@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF‑8" />
-  <meta name="viewport" content="width=device‑width,initial‑scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PvPStealPvP</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-950 text-white font-sans">
+<body class="bg-gray-950 text-white min-h-screen font-sans">
 
-<header class="bg-gray-900 p-5 shadow-md">
-  <div class="container mx-auto flex justify-between items-center">
-    <h1 class="text-3xl font-bold text-emerald-400">PvPStealPvP</h1>
-    <div class="flex items-center">
-      <span class="bg-emerald-600 text-black font-bold px-4 py-2 rounded-lg">IP: pvpstealpvp.minehut.gg</span>
-      <a href="https://discord.gg/yourInviteCode" target="_blank" rel="noopener noreferrer"
-         class="ml-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg inline-flex items-center space-x-2">
-        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord" class="w-5 h-5"/>
-        <span>Join Discord</span>
-      </a>
-    </div>
-  </div>
-</header>
-
-  <main class="flex flex-col md:flex-row p-6 gap-6">
-
-    <aside class="w-full md:w-1/4 bg-gray-900 p-4 rounded-xl shadow-lg">
-      <h2 class="text-xl font-bold text-emerald-300 mb-4">Staff</h2>
-      <div id="staffList" class="space-y-4 text-sm text-center">
-        <p id="staffError" class="text-red-500 text-xs"></p>
+  <header class="bg-gray-900 p-6 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-emerald-400">PvPStealPvP</h1>
+      <div class="flex items-center space-x-4">
+        <span class="bg-emerald-600 text-black font-bold px-4 py-2 rounded-lg">IP: pvpstealpvp.minehut.gg</span>
+        <a href="https://discord.gg/YOUR_INVITE_CODE" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+          <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" class="w-5 h-5" />
+          <span>Join Discord</span>
+        </a>
       </div>
-    </aside>
+    </div>
+  </header>
 
+  <main class="container mx-auto py-10 px-4 md:px-10 flex flex-col md:flex-row gap-8">
+    
+    <!-- Staff List -->
+    <section class="w-full md:w-1/4 bg-gray-900 p-6 rounded-xl shadow-lg">
+      <h2 class="text-xl font-bold text-emerald-300 mb-4">Staff</h2>
+      <div id="staffList" class="space-y-6"></div>
+      <p id="staffError" class="text-red-500 text-sm mt-2"></p>
+    </section>
+
+    <!-- Leaderboard -->
     <section class="w-full md:w-3/4 bg-gray-900 p-6 rounded-xl shadow-lg">
       <h2 class="text-2xl font-bold text-emerald-300 mb-4">Top Players</h2>
       <div class="bg-gray-800 rounded-lg overflow-hidden">
@@ -50,84 +50,75 @@
 
   </main>
 
-  <footer class="text-center text-gray-500 text-sm py-4 bg-gray-950">
-    &copy; 2025 PvPStealPvP • Competitive PvP community
-  </footer>
+  <script>
+    function showError(id, message) {
+      document.getElementById(id).innerText = message;
+      console.error(message);
+    }
 
-<script>
-  function showError(elemId, msg) {
-    document.getElementById(elemId).innerText = msg;
-    console.error(msg);
-  }
+    function loadLeaderboard() {
+      fetch('leaderboard.yml?_=' + Date.now())
+        .then(res => {
+          if (!res.ok) throw new Error('Leaderboard fetch failed');
+          return res.text();
+        })
+        .then(text => {
+          const data = jsyaml.load(text);
+          const table = document.getElementById('leaderboardTable');
+          table.innerHTML = '';
+          if (!Array.isArray(data)) throw new Error('Leaderboard must be a list');
+          data.forEach((player, index) => {
+            const name = player.player || 'Unknown';
+            const skin = `https://minotar.net/armor/body/${name}/40.png?${Date.now()}`;
+            table.innerHTML += `
+              <tr>
+                <td class="p-3">${index + 1}</td>
+                <td class="p-3 flex justify-between items-center">
+                  <span>${name}</span>
+                  <img src="${skin}" alt="${name}" class="h-10 rounded" />
+                </td>
+              </tr>`;
+          });
+          showError('leaderboardError', '');
+        })
+        .catch(err => showError('leaderboardError', err.message));
+    }
 
-function loadLeaderboard() {
-  fetch('leaderboard.yml?_=' + Date.now())
-    .then(res => {
-      if (!res.ok) throw new Error('HTTP ' + res.status + ' loading leaderboard');
-      return res.text();
-    })
-    .then(yml => {
-      const list = jsyaml.load(yml);
-      if (!Array.isArray(list)) throw new Error('Leaderboard is not a list');
-      const table = document.getElementById('leaderboardTable');
-      table.innerHTML = '';
-      list.forEach((entry, i) => {
-      <td class="p-3 flex items-center justify-between gap-4">
-      <span>${username}</span>
-    <img src="${skinURL}" alt="${username}" class="h-10 w-auto rounded" />
-    </td>
-        const skinURL = `https://minotar.net/armor/body/${username}/40.png?${Date.now()}`; // adds timestamp to refresh
-        table.innerHTML += `
-          <tr>
-            <td class="p-3">${i + 1}</td>
-            <td class="p-3 flex items-center justify-between gap-4">
-              <span>${username}</span>
-              <img src="${skinURL}" alt="${username}" class="h-10 w-auto rounded" />
-            </td>
-          </tr>`;
-      });
-      showError('leaderboardError', '');
-    })
-    .catch(err => showError('leaderboardError', err.message));
-}
+    function loadStaff() {
+      fetch('staff.yml?_=' + Date.now())
+        .then(res => {
+          if (!res.ok) throw new Error('Staff fetch failed');
+          return res.text();
+        })
+        .then(text => {
+          const data = jsyaml.load(text);
+          const list = document.getElementById('staffList');
+          list.innerHTML = '';
+          if (!Array.isArray(data)) throw new Error('Staff must be a list');
+          data.forEach(member => {
+            const name = member.username || 'Unknown';
+            const discord = member.discord || '';
+            const role = member.role || '';
+            const face = `https://minotar.net/avatar/${name}/60.png?${Date.now()}`;
+            list.innerHTML += `
+              <div class="text-center">
+                <img src="${face}" class="mx-auto rounded-full mb-2" />
+                <p class="font-bold">${name}</p>
+                <p class="text-sm text-gray-300">${role}</p>
+                <p class="text-sm text-gray-400">${discord}</p>
+              </div>`;
+          });
+          showError('staffError', '');
+        })
+        .catch(err => showError('staffError', err.message));
+    }
 
-  function loadStaff() {
-    fetch('staff.yml?_=' + Date.now())
-      .then(res => {
-        if (!res.ok) throw new Error('HTTP ' + res.status + ' loading staff');
-        return res.text();
-      })
-      .then(yml => {
-        const staff = jsyaml.load(yml);
-        if (!Array.isArray(staff)) throw new Error('Staff is not a list');
-        const container = document.getElementById('staffList');
-        container.innerHTML = '';
-        staff.forEach(m => {
-          const username = m.username || '??';
-          const discord = m.discord || '';
-          const role = m.role || '';
-          container.innerHTML += `
-            <div>
-              <img src="https://minotar.net/avatar/${username}/60" class="mx-auto rounded-full mb-2" />
-              <p><strong>${username}</strong><br>
-              <span class="text-gray-300">${role}</span><br>
-              <span class="text-gray-400">${discord}</span></p>
-            </div>`;
-        });
-        showError('staffError', ''); // clear errors
-      })
-      .catch(err => showError('staffError', err.message));
-  }
-
-  // Initial load
-  loadLeaderboard();
-  loadStaff();
-
-  // Auto-refresh every 10 seconds
-  setInterval(() => {
     loadLeaderboard();
     loadStaff();
-  }, 10000); // 10 seconds
-</script>
+    setInterval(() => {
+      loadLeaderboard();
+      loadStaff();
+    }, 10000); // every 10 sec
+  </script>
 </body>
 </html>
