@@ -13,8 +13,6 @@
       padding: 0;
       height: 100%;
     }
-
-    /* Animated gradient background */
     body::before {
       content: "";
       position: fixed;
@@ -23,9 +21,8 @@
       background-size: 400% 400%;
       animation: gradient 30s ease infinite;
       z-index: -1;
-      opacity: 0.15; /* subtle */
+      opacity: 0.15;
     }
-
     @keyframes gradient {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -34,7 +31,6 @@
   </style>
 </head>
 <body class="text-white font-sans h-full">
-
   <header class="bg-gray-900 p-6 shadow-md">
     <div class="container mx-auto flex justify-between items-center">
       <h1 class="text-3xl font-bold text-emerald-400">PvPStealPvP</h1>
@@ -49,15 +45,12 @@
   </header>
 
   <main class="container mx-auto py-10 px-4 md:px-10 flex flex-col md:flex-row gap-8">
-
-    <!-- Staff List -->
     <section class="w-full md:w-1/4 bg-gray-900 p-6 rounded-xl shadow-lg">
       <h2 class="text-xl font-bold text-emerald-300 mb-4">Staff</h2>
       <div id="staffList" class="space-y-6"></div>
       <p id="staffError" class="text-red-500 text-sm mt-2"></p>
     </section>
 
-    <!-- Leaderboard -->
     <section class="w-full md:w-3/4 bg-gray-900 p-6 rounded-xl shadow-lg">
       <h2 class="text-2xl font-bold text-emerald-300 mb-4">Top Players</h2>
       <div class="bg-gray-800 rounded-lg overflow-hidden">
@@ -73,73 +66,67 @@
         <p id="leaderboardError" class="text-red-500 text-xs m-2"></p>
       </div>
     </section>
-
   </main>
 
   <script>
-    function showError(id, message) {
-      document.getElementById(id).innerText = message;
-      console.error(message);
+    async function getUUID(username) {
+      const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);
+      if (!res.ok) throw new Error(`UUID fetch failed for ${username}`);
+      const data = await res.json();
+      return data.id;
     }
 
-    function loadLeaderboard() {
-      fetch('leaderboard.yml?_=' + Date.now())
-        .then(res => {
-          if (!res.ok) throw new Error('Leaderboard fetch failed');
-          return res.text();
-        })
-        .then(text => {
-          const data = jsyaml.load(text);
-          const table = document.getElementById('leaderboardTable');
-          table.innerHTML = '';
-          if (!Array.isArray(data)) throw new Error('Leaderboard must be a list');
-          data.forEach((player, index) => {
-            const name = player.player || 'Unknown';
-            const skin = `https://minecraftuuid.com/api/render/body/${name}/40?${Date.now()}`;
-            table.innerHTML += `
-              <tr>
-                <td class="p-3">${index + 1}</td>
-                <td class="p-3 flex justify-between items-center">
-                  <span>${name}</span>
-                  <img src="${skin}" alt="${name}" class="h-10 rounded" />
-                </td>
-              </tr>`;
-          });
-          showError('leaderboardError', '');
-        })
-        .catch(err => showError('leaderboardError', err.message));
+    async function loadLeaderboard() {
+      try {
+        const res = await fetch('leaderboard.yml?_=' + Date.now());
+        if (!res.ok) throw new Error('Failed to load leaderboard');
+        const text = await res.text();
+        const data = jsyaml.load(text);
+        const table = document.getElementById('leaderboardTable');
+        table.innerHTML = '';
+        for (let i = 0; i < data.length; i++) {
+          const player = data[i].player;
+          const uuid = await getUUID(player);
+          const skin = `https://api.mineatar.io/body/full/${uuid}?scale=16`;
+          table.innerHTML += `
+            <tr>
+              <td class="p-3">${i + 1}</td>
+              <td class="p-3 flex justify-between items-center">
+                <span>${player}</span>
+                <img src="${skin}" class="h-10 rounded" />
+              </td>
+            </tr>`;
+        }
+      } catch (err) {
+        document.getElementById('leaderboardError').innerText = err.message;
+      }
     }
 
-    function loadStaff() {
-      fetch('staff.yml?_=' + Date.now())
-        .then(res => {
-          if (!res.ok) throw new Error('Staff fetch failed');
-          return res.text();
-        })
-        .then(text => {
-          const data = jsyaml.load(text);
-          const list = document.getElementById('staffList');
-          list.innerHTML = '';
-          if (!Array.isArray(data)) throw new Error('Staff must be a list');
-          data.forEach(member => {
-            const name = member.username || 'Unknown';
-            const discord = member.discord || '';
-            const role = member.role || '';
-            const face = `https://minecraftuuid.com/api/render/head/${name}/60?${Date.now()}`;
-            list.innerHTML += `
-              <div class="text-center">
-                <img src="${face}" class="mx-auto rounded-full mb-2" />
-                <p class="font-bold">${name}</p>
-                <p class="text-sm text-gray-300">${role}</p>
-                <p class="text-sm text-gray-400">${discord}</p>
-              </div>`;
-          });
-          showError('staffError', '');
-        })
-        .catch(err => showError('staffError', err.message));
+    async function loadStaff() {
+      try {
+        const res = await fetch('staff.yml?_=' + Date.now());
+        if (!res.ok) throw new Error('Failed to load staff list');
+        const text = await res.text();
+        const data = jsyaml.load(text);
+        const list = document.getElementById('staffList');
+        list.innerHTML = '';
+        for (let i = 0; i < data.length; i++) {
+          const member = data[i];
+          const uuid = await getUUID(member.username);
+          const face = `https://api.mineatar.io/face/${uuid}?scale=12`;
+          list.innerHTML += `
+            <div class="text-center">
+              <img src="${face}" class="mx-auto rounded-full mb-2" />
+              <p class="font-bold">${member.username}</p>
+              <p class="text-sm text-gray-300">${member.role}</p>
+              <p class="text-sm text-gray-400">${member.discord}</p>
+            </div>`;
+        }
+      } catch (err) {
+        document.getElementById('staffError').innerText = err.message;
+      }
     }
 
-    // Initial load + auto refresh every 10s
     loadLeaderboard();
     loadStaff();
     setInterval(() => {
