@@ -1,15 +1,7 @@
-- username: Notch
-  discord: "@notch#0001"
+- username: Jevdet
+  discord: "Jevdet"
   role: Owner
 
 - username: game_gzt
   discord: "@gzt.de"
   role: Dev
-
-- username: Steve
-  discord: "@steve#1234"
-  role: Admin
-
-- username: Alex
-  discord: "@alex#9999"
-  role: Moderator
