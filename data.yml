@@ -1,5 +1,5 @@
 serverIP: pvpstealpvp.minehut.gg
-discordInvite: https://discord.gg/yourinvite
+discordInvite: https://discord.gg/test
 
 staff:
   - name: Jevdet
@@ -19,3 +19,9 @@ leaderboard:
     uuid: 069a79f444e94726a5befca90e38aaf5
   - username: BadBoyHalo
     uuid: 08b94e49e6b34a09a6e6b0d5e8f37a6b
+
+rules:
+  - No hacking or cheating.
+  - Be respectful to staff and players.
+  - No spamming or advertising.
+  - Use common sense at all times.
