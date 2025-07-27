@@ -71,7 +71,7 @@
   <script>
     async function getUUID(username) {
       const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);
-      if (!res.ok) throw new Error(`UUID fetch failed for ${username}`);
+      if (!res.ok) return null;
       const data = await res.json();
       return data.id;
     }
@@ -85,15 +85,16 @@
         const table = document.getElementById('leaderboardTable');
         table.innerHTML = '';
         for (let i = 0; i < data.length; i++) {
-          const player = data[i].player;
-          const uuid = await getUUID(player);
-          const skin = `https://api.mineatar.io/body/full/${uuid}?scale=16`;
+          const entry = data[i];
+          const username = entry.player;
+          const uuid = await getUUID(username);
+          const skin = uuid ? `https://api.mineatar.io/body/full/${uuid}?scale=16` : '';
           table.innerHTML += `
             <tr>
               <td class="p-3">${i + 1}</td>
               <td class="p-3 flex justify-between items-center">
-                <span>${player}</span>
-                <img src="${skin}" class="h-10 rounded" />
+                <span>${username}</span>
+                ${skin ? `<img src="${skin}" class="h-10 rounded" />` : ''}
               </td>
             </tr>`;
         }
@@ -112,14 +113,15 @@
         list.innerHTML = '';
         for (let i = 0; i < data.length; i++) {
           const member = data[i];
-          const uuid = await getUUID(member.username);
-          const face = `https://api.mineatar.io/face/${uuid}?scale=12`;
+          const username = member.username;
+          const uuid = await getUUID(username);
+          const face = uuid ? `https://api.mineatar.io/face/${uuid}?scale=12` : '';
           list.innerHTML += `
             <div class="text-center">
-              <img src="${face}" class="mx-auto rounded-full mb-2" />
-              <p class="font-bold">${member.username}</p>
-              <p class="text-sm text-gray-300">${member.role}</p>
-              <p class="text-sm text-gray-400">${member.discord}</p>
+              ${face ? `<img src="${face}" class="mx-auto rounded-full mb-2" />` : ''}
+              <p class="font-bold">${username}</p>
+              <p class="text-sm text-gray-300">${member.role || ''}</p>
+              <p class="text-sm text-gray-400">${member.discord || ''}</p>
             </div>`;
         }
       } catch (err) {
